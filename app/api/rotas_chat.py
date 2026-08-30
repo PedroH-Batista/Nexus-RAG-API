@@ -48,12 +48,17 @@ async def endpoint_ingerir_documento(payload: RequisicaoIngestao):
 @router.post("/perguntar")
 async def endpoint_realizar_consulta(payload: RequisicaoConsulta):
     """
-    Executa a busca semântica no banco de dados e retorna os fragmentos 
-    mais relevantes para a pergunta enviada.
+    Executa a busca semântica no banco de dados, recupera o contexto
+    e orquestra a geração da resposta via LLM.
     """
-    contextos = motor.consultar_conhecimento(
-        pergunta=payload.pergunta, 
-        limite_resultados=payload.limite
-    )
-    
-    return {"resposta": contextos}
+    try:
+        resposta_llm = motor.consultar_conhecimento(
+            pergunta=payload.pergunta, 
+            limite_resultados=payload.limite
+        )
+        return {"resposta": resposta_llm}
+    except Exception as erro:
+        raise HTTPException(
+            status_code=503, 
+            detail=f"Falha no motor cognitivo: {str(erro)}"
+            )

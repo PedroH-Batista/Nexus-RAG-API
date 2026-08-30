@@ -8,7 +8,7 @@ class ClienteGroqLLM(IGeradorLLM):
     Garante altíssima performance de inferência consumindo modelos open-source avançados.
     """
 
-    def __init__(self, modelo: str = "llama3-8b-8192"):
+    def __init__(self, modelo: str = "openai/gpt-oss-20b"):
         """
         Inicializa o cliente instanciando a SDK oficial. Injeta a chave de segurança 
         carregada e validada em tempo de execução pela camada de configuração (Pydantic).

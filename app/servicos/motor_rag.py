@@ -1,6 +1,6 @@
 from typing import List, Dict, Any
 from app.servicos.processador import ProcessadorDeDocumentos
-from app.dominio.interfaces import IVectorDatabase
+from app.dominio.interfaces import IVectorDatabase, IGeradorLLM
 
 class MotorRAG:
     """
@@ -9,13 +9,14 @@ class MotorRAG:
     de texto e o armazenamento/busca vetorial.
     """
 
-    def __init__(self, processador: ProcessadorDeDocumentos, banco_vetorial: IVectorDatabase):
+    def __init__(self, processador: ProcessadorDeDocumentos, banco_vetorial: IVectorDatabase, gerador_llm: IGeradorLLM):
         """
         Injeção de dependência estrita. A classe recebe os componentes de infraestrutura
         e serviços instanciados, garantindo isolamento e facilidade de testes unitários.
         """
         self.processador = processador
         self.banco_vetorial = banco_vetorial
+        self.gerador_llm = gerador_llm
 
     def ingerir_conteudo(self, texto_bruto: str, metadados_base: Dict[str, Any] = None) -> bool:
         """
@@ -35,14 +36,23 @@ class MotorRAG:
         sucesso = self.banco_vetorial.add_documents(chunks=chunks, metadatas=metadados)
         return sucesso
 
-    def consultar_conhecimento(self, pergunta: str, limite_resultados: int = 3) -> List[str]:
+    def consultar_conhecimento(self, pergunta: str, limite_resultados: int = 3) -> str:
         """
-        Interfere na base vetorial cruzando a pergunta do usuário com o conhecimento indexado.
-        Retorna apenas o conteúdo textual limpo, pronto para ser injetado em um LLM.
+        Executa a esteira RAG completa: recupera o contexto matemático vetorial 
+        e delega a consolidação ao motor LLM para geração da resposta final.
         """
         resultados = self.banco_vetorial.similarity_search(query=pergunta, top_k=limite_resultados)
         
         # Extrai os textos do modelo de dados ResultadoBusca (DataClass)
         contextos_recuperados = [resultado.conteudo for resultado in resultados]
         
-        return contextos_recuperados
+        # Consolidação de blocos para injeção no prompt
+        contexto_unificado = "\n\n---\n\n".join(contextos_recuperados)
+        
+        # O orquestrador aciona a interface do LLM, passando os limites estritos da operação.
+        resposta_final = self.gerador_llm.gerar_resposta(
+            contexto=contexto_unificado, 
+            pergunta=pergunta
+        )
+        
+        return resposta_final

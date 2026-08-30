@@ -42,3 +42,16 @@ class IVectorDatabase(ABC):
             A list of dictionaries representing the retrieved documents and metadata.
         """
         pass
+class IGeradorLLM(ABC):
+    """
+    Contrato estrito para qualquer Modelo de Linguagem de Larga Escala (LLM).
+    Impede o acoplamento do sistema a fornecedores específicos (OpenAI, Google, Anthropic).
+    """
+
+    @abstractmethod
+    def gerar_resposta(self, contexto: str, pergunta: str) -> str:
+        """
+        Recebe o contexto técnico extraído do banco vetorial e a pergunta do usuário.
+        Deve retornar uma resposta formatada, proibindo alucinações fora do contexto.
+        """
+        pass

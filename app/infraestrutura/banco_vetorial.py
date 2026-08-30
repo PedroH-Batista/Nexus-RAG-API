@@ -28,15 +28,17 @@ class ClienteChromaDB(IVectorDatabase):
 
     def add_documents(self, chunks: List[str], metadatas: List[Dict[str, Any]]) -> bool:
         """
-        Vetoriza automaticamente e armazena os blocos de texto no banco.
-        A assinatura obedece estritamente ao contrato IVectorDatabase.
+        Executa a ingestão e vetorização de blocos de texto no ChromaDB.
+        Garante a integridade e unicidade dos registros via geração de UUID v4.
         """
+        import uuid
+        
+    
         if self.colecao is None:
             self.connect()
 
-        # Na engenharia de produção em hiperescala, os IDs devem ser hashes únicos (UUID). 
-        # Para a infraestrutura inicial, geramos IDs baseados no lote.
-        ids = [f"doc_lote_{i}" for i in range(len(chunks))]
+       # Geração de hashes únicos para prevenção de colisão de memória (overwrite)
+        ids = [str(uuid.uuid4()) for _ in range(len(chunks))]
 
         try:
             self.colecao.add(

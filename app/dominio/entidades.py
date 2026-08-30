@@ -16,4 +16,4 @@ class ResultadoBusca:
     """
     conteudo: str
     metadados: Dict[str, Any]
-    score_similaridade: float
+    score_similaridade: float   # NOTA TÉCNICA: Representa a Distância (L2/Cosseno). Valores menores indicam maior proximidade matemática.

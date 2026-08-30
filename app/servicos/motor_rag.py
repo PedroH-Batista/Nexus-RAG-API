@@ -1,4 +1,4 @@
-from typing import List, Dict, Any
+from typing import List, Dict, Any, Optional
 from app.servicos.processador import ProcessadorDeDocumentos
 from app.dominio.interfaces import IVectorDatabase, IGeradorLLM
 
@@ -18,7 +18,7 @@ class MotorRAG:
         self.banco_vetorial = banco_vetorial
         self.gerador_llm = gerador_llm
 
-    def ingerir_conteudo(self, texto_bruto: str, metadados_base: Dict[str, Any] = None) -> bool:
+    def ingerir_conteudo(self, texto_bruto: str, metadados_base: Optional[Dict[str, Any]] = None) -> bool:
         """
         Recebe o texto bruto, executa o fatiamento de alta performance e ordena 
         a persistência na infraestrutura vetorial.

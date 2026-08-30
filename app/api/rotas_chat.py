@@ -14,7 +14,7 @@ banco_instancia = ClienteChromaDB()
 llm_instancia = ClienteGroqLLM()
 
 # Injeção de dependência no Orquestrador
-motor = MotorRAG(processador=processador_instancia, banco_vetorial=banco_instancia, llm=llm_instancia)
+motor = MotorRAG(processador=processador_instancia, banco_vetorial=banco_instancia, gerador_llm=llm_instancia)
 
 # --- DTOs (Data Transfer Objects) para blindagem de entrada ---
 

@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from fastapi.responses import JSONResponse
+from app.api.rotas_chat import router as chat_router
 
 # Instanciação rigorosa do framework
 app = FastAPI(
@@ -9,6 +10,8 @@ app = FastAPI(
     docs_url="/docs",
     redoc_url="/redoc"
 )
+
+app.include_router(chat_router)
 
 @app.get("/", tags=["Health Check"])
 async def health_check() -> JSONResponse:

@@ -3,6 +3,11 @@ __pycache__/
 *.py[codz]
 *$py.class
 
+# Bancos de Dados Locais
+chroma_data/
+*.sqlite3
+*.db
+
 # C extensions
 *.so
 

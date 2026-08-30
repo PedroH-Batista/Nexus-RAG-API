@@ -2,6 +2,7 @@ from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 from app.servicos.processador import ProcessadorDeDocumentos
 from app.infraestrutura.banco_vetorial import ClienteChromaDB
+from app.infraestrutura.cliente_llm import ClienteGroqLLM
 from app.servicos.motor_rag import MotorRAG
 
 # Criação do roteador isolado
@@ -10,9 +11,10 @@ router = APIRouter(prefix="/conhecimento", tags=["RAG Engine"])
 # Inicialização da infraestrutura central
 processador_instancia = ProcessadorDeDocumentos()
 banco_instancia = ClienteChromaDB()
+llm_instancia = ClienteGroqLLM()
 
 # Injeção de dependência no Orquestrador
-motor = MotorRAG(processador=processador_instancia, banco_vetorial=banco_instancia)
+motor = MotorRAG(processador=processador_instancia, banco_vetorial=banco_instancia, llm=llm_instancia)
 
 # --- DTOs (Data Transfer Objects) para blindagem de entrada ---
 
